@@ -1,0 +1,42 @@
+{
+  "name": "be-controle-de-vendas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "compile": "rm -rf ./dist && npx tsc && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.16",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
+    "eslint": "^8.32.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.3",
+    "typescript": "^4.9.4"
+  },
+  "lint-staged": {
+    "src/**/*.{html,ts,scss}": [
+      "prettier --write"
+    ],
+    "src/**/*.ts": [
+      "eslint --fix"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}
