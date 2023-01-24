@@ -3,7 +3,7 @@ import { EnumHttpStatus } from "../../../../shared/enums/EnumHttpStatus";
 import { IReqLogin } from "../../models/IReqLogin";
 import { findUser } from "./loginUseCase";
 
-export const loginController = (req: Request, res: Response) => {
+export const loginController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body as IReqLogin;
 
@@ -11,7 +11,7 @@ export const loginController = (req: Request, res: Response) => {
       throw new Error("Credenciais inválidas!");
     }
 
-    const userAuthenticated = findUser({ email, password });
+    const userAuthenticated = await findUser({ email, password });
 
     if (!userAuthenticated) {
       throw new Error("Usuario ou senha inválidos!");
