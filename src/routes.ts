@@ -1,5 +1,5 @@
 import { Application } from "express";
-import login from "./login/route";
+import login from "./modules/login/route";
 import route1 from "./route1";
 
 const createRoutes = (app: Application) => {

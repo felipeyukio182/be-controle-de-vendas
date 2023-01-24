@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
+import { EnumHttpStatus } from "../../shared/enum/EnumHttpStatus";
 import { auth } from "./config/auth";
 
-export const LoginController = (req: Request, res: Response) => {
+export const loginController = (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -17,9 +18,11 @@ export const LoginController = (req: Request, res: Response) => {
     res.status(200).json({ email: email, token: jwt });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(401).json({ error: error.message });
+      res.status(EnumHttpStatus.Unauthorized).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Erro inesperado" });
+      res
+        .status(EnumHttpStatus.InternalServer)
+        .json({ error: "Erro inesperado" });
     }
   }
 };
