@@ -1,9 +1,9 @@
 import { Application } from "express";
-import login from "./modules/login/route";
+import auth from "./modules/auth/route";
 import route1 from "./route1";
 
 const createRoutes = (app: Application) => {
-  app.use("/", login);
+  app.use("/auth", auth);
   app.use("/", route1);
 };
 

@@ -1,21 +1,23 @@
 import { Request, Response } from "express";
-import { sign } from "jsonwebtoken";
-import { EnumHttpStatus } from "../../shared/enum/EnumHttpStatus";
-import { auth } from "./config/auth";
+import { EnumHttpStatus } from "../../../../shared/enums/EnumHttpStatus";
+import { IReqLogin } from "../../models/IReqLogin";
+import { findUser } from "./loginUseCase";
 
 export const loginController = (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body as IReqLogin;
 
     if (!email || !password) {
       throw new Error("Credenciais inválidas!");
     }
 
-    const jwt = sign({ email, password }, auth.jwt.secret, {
-      expiresIn: auth.jwt.expiresIn,
-    });
+    const userAuthenticated = findUser({ email, password });
 
-    res.status(200).json({ email: email, token: jwt });
+    if (!userAuthenticated) {
+      throw new Error("Usuario ou senha inválidos!");
+    }
+
+    res.status(EnumHttpStatus.OK).json({ ...userAuthenticated });
   } catch (error) {
     if (error instanceof Error) {
       res.status(EnumHttpStatus.Unauthorized).json({ error: error.message });
