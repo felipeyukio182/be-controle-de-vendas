@@ -4,6 +4,7 @@ import { IReqLogin } from "../../models/IReqLogin";
 import { findUser } from "./loginUseCase";
 
 export const loginController = async (req: Request, res: Response) => {
+  console.log("auth/login foi chamado...");
   try {
     const { email, password } = req.body as IReqLogin;
 
@@ -19,6 +20,7 @@ export const loginController = async (req: Request, res: Response) => {
 
     res.status(EnumHttpStatus.OK).json({ ...userAuthenticated });
   } catch (error) {
+    console.log("auth/login error: ", error);
     if (error instanceof Error) {
       res.status(EnumHttpStatus.Unauthorized).json({ error: error.message });
     } else {
