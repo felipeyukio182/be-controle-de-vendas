@@ -40,6 +40,7 @@ const getUsersDynamodb = async ({
     );
     return unmarshallItems ?? [];
   } catch (error) {
+    console.log(error);
     return [];
   } finally {
     client.destroy();
