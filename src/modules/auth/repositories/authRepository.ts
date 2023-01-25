@@ -50,7 +50,7 @@ const getUsersDynamodb = async ({
 const userDDBToUser = (userDDB: IUserDDB): IUser => {
   return {
     email: userDDB.pk,
-    password: userDDB.password,
+    username: userDDB.username,
   };
 };
 
