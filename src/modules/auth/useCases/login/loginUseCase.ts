@@ -1,7 +1,7 @@
 import {
   generateJwtRefreshToken,
   generateJwtToken,
-} from "../../../../shared/modules/jwt/jwt";
+} from "../../../../shared/services/jwt/jwt";
 import { IReqLogin } from "../../models/IReqLogin";
 import { IResLogin } from "../../models/IResLogin";
 import { findUserDb } from "../../repositories/authRepository";

@@ -2,7 +2,7 @@ import { QueryCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { IUser } from "../../../models/IUser";
 import { IUserDDB } from "../../../models/IUserDDB";
-import createDynamoDbClient from "../../../shared/modules/dynamoDb/createDynamoDbClient";
+import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqLogin } from "../models/IReqLogin";
 
 const findUserDb = async ({
