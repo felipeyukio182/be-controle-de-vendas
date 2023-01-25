@@ -8,7 +8,7 @@ import {
 import { ITokens } from "../../models/ITokens";
 
 const getNewTokens = ({ token, refreshToken }: ITokens): ITokens => {
-  const tokenPayload = verifyJwtToken(token);
+  const tokenPayload = verifyJwtToken(token, true);
   const refreshTokenPayload = verifyJwtRefreshToken(refreshToken);
 
   if (!tokenHasExpired(tokenPayload.exp)) {

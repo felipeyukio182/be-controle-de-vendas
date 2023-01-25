@@ -11,10 +11,13 @@ const generateJwtToken = ({ id, email, username }: IUser): string => {
   return jwtToken;
 };
 
-const verifyJwtToken = (jwtToken: string): ITokenPayload => {
+const verifyJwtToken = (
+  jwtToken: string,
+  ignoreExpiration = false
+): ITokenPayload => {
   try {
     const decodedJwtToken = verify(jwtToken, auth.jwt.secret, {
-      ignoreExpiration: true,
+      ignoreExpiration: ignoreExpiration,
     }) as ITokenPayload;
     return decodedJwtToken;
   } catch (error) {
@@ -34,12 +37,14 @@ const generateJwtRefreshToken = ({ id, email, username }: IUser): string => {
   return jwtRefreshToken;
 };
 
-const verifyJwtRefreshToken = (jwtToken: string): ITokenPayload => {
+const verifyJwtRefreshToken = (
+  jwtToken: string,
+  ignoreExpiration = false
+): ITokenPayload => {
   try {
-    const decodedJwtToken = verify(
-      jwtToken,
-      auth.jwtRefresh.secret
-    ) as ITokenPayload;
+    const decodedJwtToken = verify(jwtToken, auth.jwtRefresh.secret, {
+      ignoreExpiration: ignoreExpiration,
+    }) as ITokenPayload;
     return decodedJwtToken;
   } catch (error) {
     throw new Error("Refresh token inválido.");
