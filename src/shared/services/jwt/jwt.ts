@@ -1,29 +1,49 @@
 import { sign, verify } from "jsonwebtoken";
+import { ITokenPayload } from "../../../models/ITokenPayload";
 import { IUser } from "../../../models/IUser";
 import { auth } from "./config/auth";
 
-const generateJwtToken = ({ email, password }: IUser): string => {
-  const jwtToken = sign({ email, password }, auth.jwt.secret, {
+const generateJwtToken = ({ id, email, username }: IUser): string => {
+  const jwtToken = sign({ id, email, username }, auth.jwt.secret, {
     expiresIn: auth.jwt.expiresIn,
+    subject: `${id}`,
   });
   return jwtToken;
 };
 
-const verifyJwtToken = (jwtToken: string) => {
-  const decodedJwtToken = verify(jwtToken, auth.jwt.secret);
-  return decodedJwtToken;
+const verifyJwtToken = (jwtToken: string): ITokenPayload => {
+  try {
+    const decodedJwtToken = verify(jwtToken, auth.jwt.secret, {
+      ignoreExpiration: true,
+    }) as ITokenPayload;
+    return decodedJwtToken;
+  } catch (error) {
+    throw new Error("Token inválido.");
+  }
 };
 
-const generateJwtRefreshToken = ({ email, password }: IUser): string => {
-  const jwtRefreshToken = sign({ email, password }, auth.jwtRefresh.secret, {
-    expiresIn: auth.jwtRefresh.expiresIn,
-  });
+const generateJwtRefreshToken = ({ id, email, username }: IUser): string => {
+  const jwtRefreshToken = sign(
+    { id, email, username },
+    auth.jwtRefresh.secret,
+    {
+      expiresIn: auth.jwtRefresh.expiresIn,
+      subject: `${id}`,
+    }
+  );
   return jwtRefreshToken;
 };
 
-const verifyJwtRefreshToken = (jwtToken: string) => {
-  const decodedJwtToken = verify(jwtToken, auth.jwt.secret);
-  return decodedJwtToken;
+const verifyJwtRefreshToken = (jwtToken: string): ITokenPayload => {
+  try {
+    const decodedJwtToken = verify(
+      jwtToken,
+      auth.jwtRefresh.secret
+    ) as ITokenPayload;
+    return decodedJwtToken;
+  } catch (error) {
+    throw new Error("Refresh token inválido.");
+  }
 };
 
 export {

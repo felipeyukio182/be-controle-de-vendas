@@ -51,6 +51,7 @@ const userDDBToUser = (userDDB: IUserDDB): IUser => {
   return {
     email: userDDB.pk,
     username: userDDB.username,
+    id: userDDB.id,
   };
 };
 

@@ -4,5 +4,6 @@ export enum EnumHttpStatus {
   Unauthorized = 401,
   Forbidden = 403,
   NotFound = 404,
+  NotAcceptable = 406,
   InternalServer = 500,
 }
