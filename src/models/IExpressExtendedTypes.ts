@@ -6,7 +6,7 @@ import {
 import { IUser } from "./IUser";
 
 export interface Request extends ExpressRequest {
-  user: IUser;
+  user?: IUser;
 }
 
 export interface Response extends ExpressResponse {}

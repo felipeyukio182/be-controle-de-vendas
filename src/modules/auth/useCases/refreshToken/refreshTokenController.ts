@@ -3,7 +3,7 @@ import { EnumHttpStatus } from "../../../../shared/enums/EnumHttpStatus";
 import { getNewTokens } from "./refreshTokenUseCase";
 
 export const refreshTokenController = async (req: Request, res: Response) => {
-  console.log("auth/refresh foi chamado...");
+  console.log("/auth/refresh foi chamado...");
   try {
     const authorization = req.headers.authorization;
     const refreshToken: string | undefined = req.body.refreshToken;
@@ -16,7 +16,7 @@ export const refreshTokenController = async (req: Request, res: Response) => {
 
     res.status(EnumHttpStatus.OK).json({ newTokens });
   } catch (error) {
-    console.log("auth/refresh error: ", error);
+    console.log("/auth/refresh error: ", error);
     if (error instanceof Error) {
       res.status(EnumHttpStatus.NotAcceptable).json({ error: error.message });
     } else {
