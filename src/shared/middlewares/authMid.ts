@@ -1,7 +1,7 @@
 import { NextFunction } from "express";
 import { verifyJwtToken } from "../services/jwt/jwt";
 import { EnumHttpStatus } from "../enums/EnumHttpStatus";
-import { Request, Response } from "../../models/IExtendedExpressTypes";
+import { Request, Response } from "../../models/IExpressExtendedTypes";
 
 /** Utilizar types do IExtendedExpressTypes em endpoints que utilizarem esse middleware */
 export const authMid = (req: Request, res: Response, next: NextFunction) => {
