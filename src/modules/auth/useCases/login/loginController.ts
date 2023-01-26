@@ -6,13 +6,13 @@ import { findUser } from "./loginUseCase";
 export const loginController = async (req: Request, res: Response) => {
   console.log("/auth/login foi chamado...");
   try {
-    const { email, password } = req.body as IReqLogin;
+    const { username, password } = req.body as IReqLogin;
 
-    if (!email || !password) {
+    if (!username || !password) {
       throw new Error("Credenciais inválidas!");
     }
 
-    const userAuthenticated = await findUser({ email, password });
+    const userAuthenticated = await findUser({ username, password });
 
     if (!userAuthenticated) {
       throw new Error("Usuario ou senha inválidos!");

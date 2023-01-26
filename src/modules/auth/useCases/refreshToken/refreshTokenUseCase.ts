@@ -23,6 +23,7 @@ const getNewTokens = ({ token, refreshToken }: ITokens): ITokens => {
     id: tokenPayload.id,
     email: tokenPayload.email,
     username: tokenPayload.username,
+    name: tokenPayload.name,
   };
 
   const newToken = generateJwtToken(user);

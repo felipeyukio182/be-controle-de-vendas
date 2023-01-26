@@ -7,10 +7,10 @@ import { IResLogin } from "../../models/IResLogin";
 import { findUserDb } from "../../repositories/authRepository";
 
 const findUser = async ({
-  email,
+  username,
   password,
 }: IReqLogin): Promise<IResLogin | null> => {
-  const user = await findUserDb({ email, password });
+  const user = await findUserDb({ username, password });
   if (!user) {
     return null;
   }

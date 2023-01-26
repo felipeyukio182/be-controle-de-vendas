@@ -6,10 +6,10 @@ import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamo
 import { IReqLogin } from "../models/IReqLogin";
 
 const findUserDb = async ({
-  email,
+  username,
   password,
 }: IReqLogin): Promise<IUser | null> => {
-  const users = await getUsersDynamodb({ email, password });
+  const users = await getUsersDynamodb({ username, password });
   if (!users.length) {
     return null;
   }
@@ -17,17 +17,20 @@ const findUserDb = async ({
 };
 
 const getUsersDynamodb = async ({
-  email,
+  username,
   password,
 }: IReqLogin): Promise<IUserDDB[]> => {
   const client = createDynamoDbClient();
 
   const queryCommand = new QueryCommand({
-    TableName: "controle-de-vendas-nextjs",
+    TableName: "controle-de-vendas",
     KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
-    FilterExpression: "password = :password",
+    FilterExpression: "#u.password = :password",
+    ExpressionAttributeNames: {
+      "#u": "user",
+    },
     ExpressionAttributeValues: {
-      ":pk": { S: email },
+      ":pk": { S: username },
       ":sk": { S: "user#" },
       ":password": { S: password },
     },
@@ -49,9 +52,10 @@ const getUsersDynamodb = async ({
 
 const userDDBToUser = (userDDB: IUserDDB): IUser => {
   return {
-    email: userDDB.pk,
-    username: userDDB.username,
-    id: userDDB.id,
+    username: userDDB.user.username,
+    name: userDDB.user.name,
+    email: userDDB.user.email,
+    id: userDDB.user.id,
   };
 };
 

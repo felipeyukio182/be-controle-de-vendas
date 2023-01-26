@@ -18,6 +18,7 @@ export const authMid = (req: Request, res: Response, next: NextFunction) => {
       id: tokenPayload.id,
       email: tokenPayload.email,
       username: tokenPayload.username,
+      name: tokenPayload.name,
     };
 
     next();
