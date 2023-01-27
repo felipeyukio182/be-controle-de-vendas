@@ -17,11 +17,11 @@ async function getPeopleDynamoDb(username: string): Promise<IPersonDDB[]> {
 
   const queryCommand = new QueryCommand({
     TableName: dynamoDbTableName,
-    KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
+    KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: username },
-      ":sk": { S: "people#" },
+      ":pk": { S: `${username}#people` },
     },
+    ScanIndexForward: true,
   });
 
   try {
@@ -57,11 +57,10 @@ const getPersonDynamoDb = async ({
 
   const queryCommand = new QueryCommand({
     TableName: dynamoDbTableName,
-    KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
+    KeyConditionExpression: "pk = :pk",
     FilterExpression: "person.id = :personId",
     ExpressionAttributeValues: {
-      ":pk": { S: username },
-      ":sk": { S: "people#" },
+      ":pk": { S: `${username}#people` },
       ":personId": { N: `${personId}` },
     },
   });
@@ -79,6 +78,51 @@ const getPersonDynamoDb = async ({
     client.destroy();
   }
 };
+
+// export const postPersonDb = async ({
+//   username,
+//   person,
+// }: any): Promise<any | null> => {
+//   const peopleList = await getPeopleDb(username);
+//   // const lastIndex = peopleList.sort()
+
+//   const status = await postPersonDynamoDb({ username, person });
+//   if (!status) {
+//     return null;
+//   }
+//   return status;
+// };
+
+// const postPersonDynamoDb = async ({
+//   username,
+//   person,
+// }: any): Promise<IPersonDDB | null> => {
+//   const client = createDynamoDbClient();
+
+//   const queryCommand = new QueryCommand({
+//     TableName: dynamoDbTableName,
+//     KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
+//     FilterExpression: "person.id = :personId",
+//     ExpressionAttributeValues: {
+//       ":pk": { S: username },
+//       ":sk": { S: "people#" },
+//       // ":personId": { N: `${personId}` },
+//     },
+//   });
+
+//   try {
+//     const response = await client.send(queryCommand);
+//     const unmarshallItems = response.Items?.map(
+//       (item) => unmarshall(item) as IPersonDDB
+//     );
+//     return unmarshallItems?.[0] ?? null;
+//   } catch (error) {
+//     console.log(error);
+//     return null;
+//   } finally {
+//     client.destroy();
+//   }
+// };
 
 const personDDBToPerson = (personDDB: IPersonDDB): IPerson => {
   return personDDB.person;

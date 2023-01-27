@@ -25,14 +25,13 @@ const getUsersDynamoDb = async ({
 
   const queryCommand = new QueryCommand({
     TableName: dynamoDbTableName,
-    KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
+    KeyConditionExpression: "pk = :pk",
     FilterExpression: "#u.password = :password",
     ExpressionAttributeNames: {
       "#u": "user",
     },
     ExpressionAttributeValues: {
-      ":pk": { S: username },
-      ":sk": { S: "user#" },
+      ":pk": { S: `${username}#user` },
       ":password": { S: password },
     },
   });
