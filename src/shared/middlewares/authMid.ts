@@ -3,7 +3,9 @@ import { verifyJwtToken } from "../services/jwt/jwt";
 import { EnumHttpStatus } from "../enums/EnumHttpStatus";
 import { Request, Response } from "../../models/IExpressExtendedTypes";
 
-/** Utilizar types do IExtendedExpressTypes em endpoints que utilizarem esse middleware */
+/**
+ * Valida autenticação do usuario e adiciona informações de user na request.
+ * Utilizar types do IExtendedExpressTypes em endpoints que utilizarem esse middleware. */
 export const authMid = (req: Request, res: Response, next: NextFunction) => {
   try {
     const authorization = req.headers.authorization;

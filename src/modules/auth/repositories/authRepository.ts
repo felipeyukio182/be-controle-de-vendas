@@ -1,7 +1,7 @@
 import { QueryCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { IUser } from "../../../models/IUser";
-import { IUserDDB } from "../../../models/IUserDDB";
+import { IUserDDB } from "../../../models/dynamoDbModels/IUserDDB";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqLogin } from "../models/IReqLogin";
 

@@ -4,6 +4,6 @@ import { getPeopleController } from "./useCases/getPeople/getPeopleController";
 
 const router = Router();
 
-router.post("/", authMid, getPeopleController);
+router.get("/", authMid, getPeopleController);
 
 export default router;
