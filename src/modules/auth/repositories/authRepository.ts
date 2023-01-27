@@ -4,26 +4,27 @@ import { IUser } from "../../../models/IUser";
 import { IUserDDB } from "../../../models/dynamoDbModels/IUserDDB";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqLogin } from "../models/IReqLogin";
+import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dynamoDbTableName";
 
 const findUserDb = async ({
   username,
   password,
 }: IReqLogin): Promise<IUser | null> => {
-  const users = await getUsersDynamodb({ username, password });
+  const users = await getUsersDynamoDb({ username, password });
   if (!users.length) {
     return null;
   }
   return userDDBToUser(users[0]);
 };
 
-const getUsersDynamodb = async ({
+const getUsersDynamoDb = async ({
   username,
   password,
 }: IReqLogin): Promise<IUserDDB[]> => {
   const client = createDynamoDbClient();
 
   const queryCommand = new QueryCommand({
-    TableName: "controle-de-vendas",
+    TableName: dynamoDbTableName,
     KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
     FilterExpression: "#u.password = :password",
     ExpressionAttributeNames: {

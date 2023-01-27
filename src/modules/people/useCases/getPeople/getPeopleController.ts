@@ -2,10 +2,14 @@ import { Request, Response } from "../../../../models/IExpressExtendedTypes";
 import { EnumHttpStatus } from "../../../../shared/enums/EnumHttpStatus";
 import { getPeople } from "./getPeopleUseCase";
 
-export const getPeopleController = (req: Request, res: Response) => {
+export const getPeopleController = async (req: Request, res: Response) => {
   console.log("/people foi chamado...");
   try {
-    const people = getPeople(req.user);
+    if (!req.user) {
+      throw new Error("Sem informações do usuario.");
+    }
+    const username = req.user.username;
+    const people = await getPeople(username);
     res.status(EnumHttpStatus.OK).json({ people });
   } catch (error) {
     console.log("/people error: ", error);
