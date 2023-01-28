@@ -21,7 +21,7 @@ export const getPeopleDb = async (username: string): Promise<IPerson[]> => {
   return people;
 };
 
-async function getPeopleDynamoDb(username: string): Promise<IPersonDDB[]> {
+const getPeopleDynamoDb = async (username: string): Promise<IPersonDDB[]> => {
   const client = createDynamoDbClient();
 
   const queryCommand = new QueryCommand({
@@ -45,7 +45,7 @@ async function getPeopleDynamoDb(username: string): Promise<IPersonDDB[]> {
   } finally {
     client.destroy();
   }
-}
+};
 
 export const getPersonDb = async ({
   username,
