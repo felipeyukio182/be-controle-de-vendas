@@ -1,4 +1,8 @@
-import { PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import {
+  PutItemCommand,
+  QueryCommand,
+  UpdateItemCommand,
+} from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { IPersonDDB } from "../../../models/dynamoDbModels/IPersonDDB";
 import { IPerson } from "../../../models/IPerson";
@@ -6,6 +10,7 @@ import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dyna
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqGetPerson } from "../models/IReqGetPerson";
 import { IReqPostPerson } from "../models/IReqPostPerson";
+import { IReqPutPerson } from "../models/IReqPutPerson";
 
 export const getPeopleDb = async (username: string): Promise<IPerson[]> => {
   const peopleDDB = await getPeopleDynamoDb(username);
@@ -121,6 +126,54 @@ const postPersonDynamoDb = async (
 
   try {
     const response = await client.send(putCommand);
+    return response.$metadata.httpStatusCode ?? null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  } finally {
+    client.destroy();
+  }
+};
+
+export const putPersonDb = async ({
+  username,
+  person,
+  personId,
+}: IReqPutPerson): Promise<number | null> => {
+  const personDDB: IPersonDDB = {
+    pk: `${username}#people`,
+    sk: personId,
+    person: person,
+  };
+
+  const httpStatus = await putPersonDynamoDb(personDDB);
+  if (!httpStatus) {
+    return null;
+  }
+  return httpStatus;
+};
+
+const putPersonDynamoDb = async (
+  personDDB: IPersonDDB
+): Promise<number | null> => {
+  const client = createDynamoDbClient();
+
+  const marshallPersonDDB = marshall(personDDB);
+
+  const updateCommand = new UpdateItemCommand({
+    TableName: dynamoDbTableName,
+    Key: {
+      pk: marshallPersonDDB.pk,
+      sk: marshallPersonDDB.sk,
+    },
+    UpdateExpression: "SET person = :person",
+    ExpressionAttributeValues: {
+      ":person": marshallPersonDDB.person,
+    },
+  });
+
+  try {
+    const response = await client.send(updateCommand);
     return response.$metadata.httpStatusCode ?? null;
   } catch (error) {
     console.log(error);
