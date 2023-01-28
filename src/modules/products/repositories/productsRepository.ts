@@ -12,6 +12,7 @@ import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dyna
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqGetProduct } from "../models/IReqGetProduct";
 import { IReqPostProduct } from "../models/IReqPostProduct";
+import { IReqPutProduct } from "../models/IReqPutProduct";
 
 // import { IProductDDB } from "../../../models/dynamoDbModels/IProductDDB";
 // import { IReqDeletePerson } from "../models/IReqDeletePerson";
@@ -146,53 +147,53 @@ const postProductDynamoDb = async (
   }
 };
 
-// export const putPersonDb = async ({
-//   username,
-//   person,
-//   personId,
-// }: IReqPutPerson): Promise<number | null> => {
-//   const personDDB: IProductDDB = {
-//     pk: `${username}#people`,
-//     sk: personId,
-//     person: person,
-//   };
+export const putProductDb = async ({
+  username,
+  product,
+  productId,
+}: IReqPutProduct): Promise<number | null> => {
+  const productDDB: IProductDDB = {
+    pk: `${username}#products`,
+    sk: productId,
+    product: product,
+  };
 
-//   const httpStatus = await putPersonDynamoDb(personDDB);
-//   if (!httpStatus) {
-//     return null;
-//   }
-//   return httpStatus;
-// };
+  const httpStatus = await putProductDynamoDb(productDDB);
+  if (!httpStatus) {
+    return null;
+  }
+  return httpStatus;
+};
 
-// const putPersonDynamoDb = async (
-//   personDDB: IProductDDB
-// ): Promise<number | null> => {
-//   const client = createDynamoDbClient();
+const putProductDynamoDb = async (
+  productDDB: IProductDDB
+): Promise<number | null> => {
+  const client = createDynamoDbClient();
 
-//   const marshallPersonDDB = marshall(personDDB);
+  const marshallProductDDB = marshall(productDDB);
 
-//   const updateCommand = new UpdateItemCommand({
-//     TableName: dynamoDbTableName,
-//     Key: {
-//       pk: marshallPersonDDB.pk,
-//       sk: marshallPersonDDB.sk,
-//     },
-//     UpdateExpression: "SET person = :person",
-//     ExpressionAttributeValues: {
-//       ":person": marshallPersonDDB.person,
-//     },
-//   });
+  const updateCommand = new UpdateItemCommand({
+    TableName: dynamoDbTableName,
+    Key: {
+      pk: marshallProductDDB.pk,
+      sk: marshallProductDDB.sk,
+    },
+    UpdateExpression: "SET product = :product",
+    ExpressionAttributeValues: {
+      ":product": marshallProductDDB.product,
+    },
+  });
 
-//   try {
-//     const response = await client.send(updateCommand);
-//     return response.$metadata.httpStatusCode ?? null;
-//   } catch (error) {
-//     console.log(error);
-//     return null;
-//   } finally {
-//     client.destroy();
-//   }
-// };
+  try {
+    const response = await client.send(updateCommand);
+    return response.$metadata.httpStatusCode ?? null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  } finally {
+    client.destroy();
+  }
+};
 
 // export const deletePersonDb = async ({
 //   username,
