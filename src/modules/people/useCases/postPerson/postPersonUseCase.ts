@@ -1,10 +1,10 @@
-// import { IPerson } from "../../../../models/IPerson";
-// import { postPersonDb } from "../../repositories/peopleRepository";
+import { IReqPostPerson } from "../../models/IReqPostPerson";
+import { postPersonDb } from "../../repositories/peopleRepository";
 
-// export const postPerson = async ({
-//   username,
-//   person,
-// }: any): Promise<IPerson | null> => {
-//   const status = await postPersonDb({ username, person });
-//   return status;
-// };
+export const postPerson = async ({
+  username,
+  person,
+}: IReqPostPerson): Promise<number | null> => {
+  const httpStatus = await postPersonDb({ username, person });
+  return httpStatus;
+};

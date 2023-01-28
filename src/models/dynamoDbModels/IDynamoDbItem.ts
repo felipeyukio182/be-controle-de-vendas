@@ -1,4 +1,4 @@
 export interface IDynamoDbItem {
   pk: string;
-  sk: string;
+  sk: number;
 }

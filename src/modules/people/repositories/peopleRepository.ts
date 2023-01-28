@@ -1,10 +1,11 @@
-import { QueryCommand } from "@aws-sdk/client-dynamodb";
-import { unmarshall } from "@aws-sdk/util-dynamodb";
+import { PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { IPersonDDB } from "../../../models/dynamoDbModels/IPersonDDB";
 import { IPerson } from "../../../models/IPerson";
 import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dynamoDbTableName";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqGetPerson } from "../models/IReqGetPerson";
+import { IReqPostPerson } from "../models/IReqPostPerson";
 
 export const getPeopleDb = async (username: string): Promise<IPerson[]> => {
   const peopleDDB = await getPeopleDynamoDb(username);
@@ -79,50 +80,55 @@ const getPersonDynamoDb = async ({
   }
 };
 
-// export const postPersonDb = async ({
-//   username,
-//   person,
-// }: any): Promise<any | null> => {
-//   const peopleList = await getPeopleDb(username);
-//   // const lastIndex = peopleList.sort()
+export const postPersonDb = async ({
+  username,
+  person: personWithoutId,
+}: IReqPostPerson): Promise<number | null> => {
+  let lastId = 0;
+  const peopleList = await getPeopleDb(username);
+  const lastPerson = peopleList.pop();
+  if (lastPerson) {
+    lastId = lastPerson.id;
+  }
 
-//   const status = await postPersonDynamoDb({ username, person });
-//   if (!status) {
-//     return null;
-//   }
-//   return status;
-// };
+  const person: IPerson = {
+    id: lastId + 1,
+    ...personWithoutId,
+  };
 
-// const postPersonDynamoDb = async ({
-//   username,
-//   person,
-// }: any): Promise<IPersonDDB | null> => {
-//   const client = createDynamoDbClient();
+  const personDDB: IPersonDDB = {
+    pk: `${username}#people`,
+    sk: lastId + 1,
+    person: person,
+  };
 
-//   const queryCommand = new QueryCommand({
-//     TableName: dynamoDbTableName,
-//     KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
-//     FilterExpression: "person.id = :personId",
-//     ExpressionAttributeValues: {
-//       ":pk": { S: username },
-//       ":sk": { S: "people#" },
-//       // ":personId": { N: `${personId}` },
-//     },
-//   });
+  const httpStatus = await postPersonDynamoDb(personDDB);
+  if (!httpStatus) {
+    return null;
+  }
+  return httpStatus;
+};
 
-//   try {
-//     const response = await client.send(queryCommand);
-//     const unmarshallItems = response.Items?.map(
-//       (item) => unmarshall(item) as IPersonDDB
-//     );
-//     return unmarshallItems?.[0] ?? null;
-//   } catch (error) {
-//     console.log(error);
-//     return null;
-//   } finally {
-//     client.destroy();
-//   }
-// };
+const postPersonDynamoDb = async (
+  personDDB: IPersonDDB
+): Promise<number | null> => {
+  const client = createDynamoDbClient();
+
+  const putCommand = new PutItemCommand({
+    TableName: dynamoDbTableName,
+    Item: marshall(personDDB),
+  });
+
+  try {
+    const response = await client.send(putCommand);
+    return response.$metadata.httpStatusCode ?? null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  } finally {
+    client.destroy();
+  }
+};
 
 const personDDBToPerson = (personDDB: IPersonDDB): IPerson => {
   return personDDB.person;
