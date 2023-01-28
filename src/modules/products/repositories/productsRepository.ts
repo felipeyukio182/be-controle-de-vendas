@@ -11,6 +11,7 @@ import { IProduct } from "../../../models/IProduct";
 import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dynamoDbTableName";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqGetProduct } from "../models/IReqGetProduct";
+import { IReqPostProduct } from "../models/IReqPostProduct";
 
 // import { IProductDDB } from "../../../models/dynamoDbModels/IProductDDB";
 // import { IReqDeletePerson } from "../models/IReqDeletePerson";
@@ -95,55 +96,55 @@ const getProductDynamoDb = async ({
   }
 };
 
-// export const postPersonDb = async ({
-//   username,
-//   person: personWithoutId,
-// }: IReqPostPerson): Promise<number | null> => {
-//   let lastId = 0;
-//   const peopleList = await getPeopleDb(username);
-//   const lastPerson = peopleList.pop();
-//   if (lastPerson) {
-//     lastId = lastPerson.id;
-//   }
+export const postProductDb = async ({
+  username,
+  product: productWithoutId,
+}: IReqPostProduct): Promise<number | null> => {
+  let lastId = 0;
+  const productsList = await getProductsDb(username);
+  const lastProduct = productsList.pop();
+  if (lastProduct) {
+    lastId = lastProduct.id;
+  }
 
-//   const person: IProduct = {
-//     id: lastId + 1,
-//     ...personWithoutId,
-//   };
+  const product: IProduct = {
+    id: lastId + 1,
+    ...productWithoutId,
+  };
 
-//   const personDDB: IProductDDB = {
-//     pk: `${username}#people`,
-//     sk: lastId + 1,
-//     person: person,
-//   };
+  const personDDB: IProductDDB = {
+    pk: `${username}#products`,
+    sk: lastId + 1,
+    product: product,
+  };
 
-//   const httpStatus = await postPersonDynamoDb(personDDB);
-//   if (!httpStatus) {
-//     return null;
-//   }
-//   return httpStatus;
-// };
+  const httpStatus = await postProductDynamoDb(personDDB);
+  if (!httpStatus) {
+    return null;
+  }
+  return httpStatus;
+};
 
-// const postPersonDynamoDb = async (
-//   personDDB: IProductDDB
-// ): Promise<number | null> => {
-//   const client = createDynamoDbClient();
+const postProductDynamoDb = async (
+  productDDB: IProductDDB
+): Promise<number | null> => {
+  const client = createDynamoDbClient();
 
-//   const putCommand = new PutItemCommand({
-//     TableName: dynamoDbTableName,
-//     Item: marshall(personDDB),
-//   });
+  const putCommand = new PutItemCommand({
+    TableName: dynamoDbTableName,
+    Item: marshall(productDDB),
+  });
 
-//   try {
-//     const response = await client.send(putCommand);
-//     return response.$metadata.httpStatusCode ?? null;
-//   } catch (error) {
-//     console.log(error);
-//     return null;
-//   } finally {
-//     client.destroy();
-//   }
-// };
+  try {
+    const response = await client.send(putCommand);
+    return response.$metadata.httpStatusCode ?? null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  } finally {
+    client.destroy();
+  }
+};
 
 // export const putPersonDb = async ({
 //   username,
