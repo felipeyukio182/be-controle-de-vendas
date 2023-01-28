@@ -10,6 +10,7 @@ import { IProductDDB } from "../../../models/dynamoDbModels/IProductDDB";
 import { IProduct } from "../../../models/IProduct";
 import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dynamoDbTableName";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
+import { IReqGetProduct } from "../models/IReqGetProduct";
 
 // import { IProductDDB } from "../../../models/dynamoDbModels/IProductDDB";
 // import { IReqDeletePerson } from "../models/IReqDeletePerson";
@@ -53,46 +54,46 @@ const getProductsDynamoDb = async (
   }
 };
 
-// export const getPersonDb = async ({
-//   username,
-//   personId,
-// }: IReqGetPerson): Promise<IProduct | null> => {
-//   const personDDB = await getPersonDynamoDb({ username, personId });
-//   if (!personDDB) {
-//     return null;
-//   }
-//   return personDDBToPerson(personDDB);
-// };
+export const getProductDb = async ({
+  username,
+  productId,
+}: IReqGetProduct): Promise<IProduct | null> => {
+  const productDDB = await getProductDynamoDb({ username, productId });
+  if (!productDDB) {
+    return null;
+  }
+  return productDDBToProduct(productDDB);
+};
 
-// const getPersonDynamoDb = async ({
-//   username,
-//   personId,
-// }: IReqGetPerson): Promise<IProductDDB | null> => {
-//   const client = createDynamoDbClient();
+const getProductDynamoDb = async ({
+  username,
+  productId,
+}: IReqGetProduct): Promise<IProductDDB | null> => {
+  const client = createDynamoDbClient();
 
-//   const queryCommand = new QueryCommand({
-//     TableName: dynamoDbTableName,
-//     KeyConditionExpression: "pk = :pk",
-//     FilterExpression: "person.id = :personId",
-//     ExpressionAttributeValues: {
-//       ":pk": { S: `${username}#people` },
-//       ":personId": { N: `${personId}` },
-//     },
-//   });
+  const queryCommand = new QueryCommand({
+    TableName: dynamoDbTableName,
+    KeyConditionExpression: "pk = :pk",
+    FilterExpression: "product.id = :productId",
+    ExpressionAttributeValues: {
+      ":pk": { S: `${username}#products` },
+      ":productId": { N: `${productId}` },
+    },
+  });
 
-//   try {
-//     const response = await client.send(queryCommand);
-//     const unmarshallItems = response.Items?.map(
-//       (item) => unmarshall(item) as IProductDDB
-//     );
-//     return unmarshallItems?.[0] ?? null;
-//   } catch (error) {
-//     console.log(error);
-//     return null;
-//   } finally {
-//     client.destroy();
-//   }
-// };
+  try {
+    const response = await client.send(queryCommand);
+    const unmarshallItems = response.Items?.map(
+      (item) => unmarshall(item) as IProductDDB
+    );
+    return unmarshallItems?.[0] ?? null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  } finally {
+    client.destroy();
+  }
+};
 
 // export const postPersonDb = async ({
 //   username,
