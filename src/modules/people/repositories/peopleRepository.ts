@@ -1,13 +1,16 @@
 import {
+  DeleteItemCommand,
   PutItemCommand,
   QueryCommand,
   UpdateItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { IDynamoDbItem } from "../../../models/dynamoDbModels/IDynamoDbItem";
 import { IPersonDDB } from "../../../models/dynamoDbModels/IPersonDDB";
 import { IPerson } from "../../../models/IPerson";
 import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dynamoDbTableName";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
+import { IReqDeletePerson } from "../models/IReqDeletePerson";
 import { IReqGetPerson } from "../models/IReqGetPerson";
 import { IReqPostPerson } from "../models/IReqPostPerson";
 import { IReqPutPerson } from "../models/IReqPutPerson";
@@ -169,6 +172,48 @@ const putPersonDynamoDb = async (
     UpdateExpression: "SET person = :person",
     ExpressionAttributeValues: {
       ":person": marshallPersonDDB.person,
+    },
+  });
+
+  try {
+    const response = await client.send(updateCommand);
+    return response.$metadata.httpStatusCode ?? null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  } finally {
+    client.destroy();
+  }
+};
+
+export const deletePersonDb = async ({
+  username,
+  personId,
+}: IReqDeletePerson): Promise<number | null> => {
+  const itemDDB: IDynamoDbItem = {
+    pk: `${username}#people`,
+    sk: personId,
+  };
+
+  const httpStatus = await deletePersonDynamoDb(itemDDB);
+  if (!httpStatus) {
+    return null;
+  }
+  return httpStatus;
+};
+
+const deletePersonDynamoDb = async (
+  itemDDB: IDynamoDbItem
+): Promise<number | null> => {
+  const client = createDynamoDbClient();
+
+  const marshallItemDDB = marshall(itemDDB);
+
+  const updateCommand = new DeleteItemCommand({
+    TableName: dynamoDbTableName,
+    Key: {
+      pk: marshallItemDDB.pk,
+      sk: marshallItemDDB.sk,
     },
   });
 

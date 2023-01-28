@@ -15,5 +15,6 @@ createRoutes(app);
 app.listen(port, () => {
   console.log("--- Backend Controle de Vendas ---");
   console.log(`Env: ${process.env.ENVIRONMENT}`);
+  console.log(`URL: ${process.env.BASE_URL}`);
   console.log(`PORT: ${port}`);
 });
