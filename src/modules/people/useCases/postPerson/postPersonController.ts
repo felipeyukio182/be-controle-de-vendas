@@ -1,10 +1,11 @@
 import { Request, Response } from "../../../../models/IExpressExtendedTypes";
 import { isNewPerson } from "../../../../models/IPerson";
 import { EnumHttpStatus } from "../../../../shared/enums/EnumHttpStatus";
+import { logger } from "../../../../shared/services/pino/logger";
 import { postPerson } from "./postPersonUseCase";
 
 export const postPersonController = async (req: Request, res: Response) => {
-  console.log("/people foi chamado... (post)");
+  logger.infoController(req.originalUrl, req.method);
   try {
     const person = req.body.person;
     if (!req.user || !req.body.person || !isNewPerson(person)) {
@@ -17,10 +18,11 @@ export const postPersonController = async (req: Request, res: Response) => {
       .status(EnumHttpStatus.OK)
       .json({ httpStatus, msg: "Pessoa cadastrada com sucesso." });
   } catch (error) {
-    console.log("/people (post) error: ", error);
     if (error instanceof Error) {
+      logger.errorController(req.originalUrl, req.method, error.message);
       res.status(EnumHttpStatus.Unauthorized).json({ error: error.message });
     } else {
+      logger.errorController(req.originalUrl, req.method);
       res
         .status(EnumHttpStatus.InternalServer)
         .json({ error: "Erro inesperado" });

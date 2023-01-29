@@ -30,6 +30,7 @@ const getPeopleDynamoDb = async (username: string): Promise<IPersonDDB[]> => {
     ExpressionAttributeValues: {
       ":pk": { S: `${username}#people` },
     },
+
     ScanIndexForward: true,
   });
 
@@ -39,8 +40,7 @@ const getPeopleDynamoDb = async (username: string): Promise<IPersonDDB[]> => {
       (item) => unmarshall(item) as IPersonDDB
     );
     return unmarshallItems ?? [];
-  } catch (error) {
-    console.log(error);
+
     return [];
   } finally {
     client.destroy();
@@ -80,9 +80,6 @@ const getPersonDynamoDb = async ({
       (item) => unmarshall(item) as IPersonDDB
     );
     return unmarshallItems?.[0] ?? null;
-  } catch (error) {
-    console.log(error);
-    return null;
   } finally {
     client.destroy();
   }
@@ -130,9 +127,6 @@ const postPersonDynamoDb = async (
   try {
     const response = await client.send(putCommand);
     return response.$metadata.httpStatusCode ?? null;
-  } catch (error) {
-    console.log(error);
-    return null;
   } finally {
     client.destroy();
   }
@@ -178,9 +172,6 @@ const putPersonDynamoDb = async (
   try {
     const response = await client.send(updateCommand);
     return response.$metadata.httpStatusCode ?? null;
-  } catch (error) {
-    console.log(error);
-    return null;
   } finally {
     client.destroy();
   }
@@ -220,9 +211,6 @@ const deletePersonDynamoDb = async (
   try {
     const response = await client.send(updateCommand);
     return response.$metadata.httpStatusCode ?? null;
-  } catch (error) {
-    console.log(error);
-    return null;
   } finally {
     client.destroy();
   }

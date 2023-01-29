@@ -4,11 +4,15 @@ dotenv.config();
 import express from "express";
 import createRoutes from "./routes";
 import bodyParser from "body-parser";
+import pino from "pino-http";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+const httpLogger = pino();
+
 app.use(bodyParser.json());
+app.use(httpLogger);
 
 createRoutes(app);
 

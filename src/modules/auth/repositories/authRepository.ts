@@ -42,9 +42,6 @@ const getUsersDynamoDb = async ({
       (item) => unmarshall(item) as IUserDDB
     );
     return unmarshallItems ?? [];
-  } catch (error) {
-    console.log(error);
-    return [];
   } finally {
     client.destroy();
   }

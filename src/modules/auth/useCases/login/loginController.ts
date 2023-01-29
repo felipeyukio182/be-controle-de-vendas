@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { EnumHttpStatus } from "../../../../shared/enums/EnumHttpStatus";
 import { IReqLogin } from "../../models/IReqLogin";
 import { findUser } from "./loginUseCase";
+import { logger } from "../../../../shared/services/pino/logger";
 
 export const loginController = async (req: Request, res: Response) => {
-  console.log("/auth/login foi chamado...");
+  logger.infoController(req.originalUrl, req.method);
   try {
     const { username, password } = req.body as IReqLogin;
 
@@ -20,10 +21,11 @@ export const loginController = async (req: Request, res: Response) => {
 
     res.status(EnumHttpStatus.OK).json({ ...userAuthenticated });
   } catch (error) {
-    console.log("/auth/login error: ", error);
     if (error instanceof Error) {
+      logger.errorController(req.originalUrl, req.method, error.message);
       res.status(EnumHttpStatus.Unauthorized).json({ error: error.message });
     } else {
+      logger.errorController(req.originalUrl, req.method);
       res
         .status(EnumHttpStatus.InternalServer)
         .json({ error: "Erro inesperado" });

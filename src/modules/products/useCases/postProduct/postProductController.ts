@@ -1,10 +1,11 @@
 import { Request, Response } from "../../../../models/IExpressExtendedTypes";
 import { isNewProduct } from "../../../../models/IProduct";
 import { EnumHttpStatus } from "../../../../shared/enums/EnumHttpStatus";
+import { logger } from "../../../../shared/services/pino/logger";
 import { postProduct } from "./postProductUseCase";
 
 export const postProductController = async (req: Request, res: Response) => {
-  console.log("/products foi chamado... (post)");
+  logger.infoController(req.originalUrl, req.method);
   try {
     const product = req.body.product;
     if (!req.user || !req.body.product || !isNewProduct(product)) {
@@ -17,10 +18,11 @@ export const postProductController = async (req: Request, res: Response) => {
       .status(EnumHttpStatus.OK)
       .json({ httpStatus, msg: "Produto cadastrado com sucesso." });
   } catch (error) {
-    console.log("/products (post) error: ", error);
     if (error instanceof Error) {
+      logger.errorController(req.originalUrl, req.method, error.message);
       res.status(EnumHttpStatus.Unauthorized).json({ error: error.message });
     } else {
+      logger.errorController(req.originalUrl, req.method);
       res
         .status(EnumHttpStatus.InternalServer)
         .json({ error: "Erro inesperado" });

@@ -1,9 +1,10 @@
 import { Request, Response } from "../../../../models/IExpressExtendedTypes";
 import { EnumHttpStatus } from "../../../../shared/enums/EnumHttpStatus";
+import { logger } from "../../../../shared/services/pino/logger";
 import { deletePerson } from "./deletePersonUseCase";
 
 export const deletePersonController = async (req: Request, res: Response) => {
-  console.log("/people foi chamado... (delete)");
+  logger.infoController(req.originalUrl, req.method);
   try {
     if (!req.user || !Number.parseInt(req.params.personId)) {
       throw new Error("Informações inválidas.");
@@ -17,10 +18,11 @@ export const deletePersonController = async (req: Request, res: Response) => {
       .status(EnumHttpStatus.OK)
       .json({ httpStatus, msg: "Pessoa excluida com sucesso." });
   } catch (error) {
-    console.log("/people (delete) error: ", error);
     if (error instanceof Error) {
+      logger.errorController(req.originalUrl, req.method, error.message);
       res.status(EnumHttpStatus.Unauthorized).json({ error: error.message });
     } else {
+      logger.errorController(req.originalUrl, req.method);
       res
         .status(EnumHttpStatus.InternalServer)
         .json({ error: "Erro inesperado" });

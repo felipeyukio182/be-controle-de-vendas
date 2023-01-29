@@ -2,6 +2,7 @@ import { NextFunction } from "express";
 import { verifyJwtToken } from "../services/jwt/jwt";
 import { EnumHttpStatus } from "../enums/EnumHttpStatus";
 import { Request, Response } from "../../models/IExpressExtendedTypes";
+import { logger } from "../services/pino/logger";
 
 /**
  * Valida autenticação do usuario e adiciona informações de user na request.
@@ -25,10 +26,11 @@ export const authMid = (req: Request, res: Response, next: NextFunction) => {
 
     next();
   } catch (error) {
-    console.log("authMid error: ", error);
     if (error instanceof Error) {
+      logger.errorController(req.originalUrl, req.method, error.message);
       res.status(EnumHttpStatus.Unauthorized).json({ error: error.message });
     } else {
+      logger.errorController(req.originalUrl, req.method);
       res
         .status(EnumHttpStatus.InternalServer)
         .json({ error: "Erro inesperado" });

@@ -43,9 +43,6 @@ const getProductsDynamoDb = async (
       (item) => unmarshall(item) as IProductDDB
     );
     return unmarshallItems ?? [];
-  } catch (error) {
-    console.log(error);
-    return [];
   } finally {
     client.destroy();
   }
@@ -84,9 +81,6 @@ const getProductDynamoDb = async ({
       (item) => unmarshall(item) as IProductDDB
     );
     return unmarshallItems?.[0] ?? null;
-  } catch (error) {
-    console.log(error);
-    return null;
   } finally {
     client.destroy();
   }
@@ -134,9 +128,6 @@ const postProductDynamoDb = async (
   try {
     const response = await client.send(putCommand);
     return response.$metadata.httpStatusCode ?? null;
-  } catch (error) {
-    console.log(error);
-    return null;
   } finally {
     client.destroy();
   }
@@ -182,9 +173,6 @@ const putProductDynamoDb = async (
   try {
     const response = await client.send(updateCommand);
     return response.$metadata.httpStatusCode ?? null;
-  } catch (error) {
-    console.log(error);
-    return null;
   } finally {
     client.destroy();
   }
@@ -224,9 +212,6 @@ const deleteProductDynamoDb = async (
   try {
     const response = await client.send(updateCommand);
     return response.$metadata.httpStatusCode ?? null;
-  } catch (error) {
-    console.log(error);
-    return null;
   } finally {
     client.destroy();
   }
