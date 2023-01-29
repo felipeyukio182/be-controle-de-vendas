@@ -1,4 +1,5 @@
 import {
+  AttributeValue,
   DeleteItemCommand,
   PutItemCommand,
   QueryCommand,
@@ -21,7 +22,10 @@ export const getPeopleDb = async (username: string): Promise<IPerson[]> => {
   return people;
 };
 
-const getPeopleDynamoDb = async (username: string): Promise<IPersonDDB[]> => {
+const getPeopleDynamoDb = async (
+  username: string,
+  lastEvaluatedKey?: Record<string, AttributeValue>
+): Promise<IPersonDDB[]> => {
   const client = createDynamoDbClient();
 
   const queryCommand = new QueryCommand({
@@ -30,18 +34,27 @@ const getPeopleDynamoDb = async (username: string): Promise<IPersonDDB[]> => {
     ExpressionAttributeValues: {
       ":pk": { S: `${username}#people` },
     },
-
+    ExclusiveStartKey: lastEvaluatedKey,
     ScanIndexForward: true,
   });
 
   try {
-    const response = await client.send(queryCommand);
-    const unmarshallItems = response.Items?.map(
-      (item) => unmarshall(item) as IPersonDDB
-    );
-    return unmarshallItems ?? [];
+    const peopleDDB: IPersonDDB[] = [];
+    let otherPeopleDDB: IPersonDDB[] = [];
 
-    return [];
+    const response = await client.send(queryCommand);
+    const unmarshallItems =
+      response.Items?.map((item) => unmarshall(item) as IPersonDDB) ?? [];
+
+    if (response.LastEvaluatedKey) {
+      otherPeopleDDB = await getPeopleDynamoDb(
+        username,
+        response.LastEvaluatedKey
+      );
+    }
+
+    peopleDDB.push(...unmarshallItems, ...otherPeopleDDB);
+    return peopleDDB;
   } finally {
     client.destroy();
   }

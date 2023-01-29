@@ -1,4 +1,5 @@
 import {
+  AttributeValue,
   DeleteItemCommand,
   PutItemCommand,
   QueryCommand,
@@ -24,7 +25,8 @@ export const getProductsDb = async (username: string): Promise<IProduct[]> => {
 };
 
 const getProductsDynamoDb = async (
-  username: string
+  username: string,
+  lastEvaluatedKey?: Record<string, AttributeValue>
 ): Promise<IProductDDB[]> => {
   const client = createDynamoDbClient();
 
@@ -34,15 +36,27 @@ const getProductsDynamoDb = async (
     ExpressionAttributeValues: {
       ":pk": { S: `${username}#products` },
     },
+    ExclusiveStartKey: lastEvaluatedKey,
     ScanIndexForward: true,
   });
 
   try {
+    const productsDDB: IProductDDB[] = [];
+    let otherProductsDDB: IProductDDB[] = [];
+
     const response = await client.send(queryCommand);
-    const unmarshallItems = response.Items?.map(
-      (item) => unmarshall(item) as IProductDDB
-    );
-    return unmarshallItems ?? [];
+    const unmarshallItems =
+      response.Items?.map((item) => unmarshall(item) as IProductDDB) ?? [];
+
+    if (response.LastEvaluatedKey) {
+      otherProductsDDB = await getProductsDynamoDb(
+        username,
+        response.LastEvaluatedKey
+      );
+    }
+
+    productsDDB.push(...unmarshallItems, ...otherProductsDDB);
+    return productsDDB;
   } finally {
     client.destroy();
   }
