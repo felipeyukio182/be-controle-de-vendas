@@ -9,6 +9,7 @@ import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { IDynamoDbItem } from "../../../models/dynamoDbModels/IDynamoDbItem";
 import { IPersonDDB } from "../../../models/dynamoDbModels/IPersonDDB";
 import { IPerson } from "../../../models/IPerson";
+import { EnumDynamoPk } from "../../../shared/enums/EnumDynamoPk";
 import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dynamoDbTableName";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqDeletePerson } from "../models/IReqDeletePerson";
@@ -32,7 +33,7 @@ const getPeopleDynamoDb = async (
     TableName: dynamoDbTableName,
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: `${username}#people` },
+      ":pk": { S: `${username}#${EnumDynamoPk.people}` },
     },
     ExclusiveStartKey: lastEvaluatedKey,
     ScanIndexForward: true,
@@ -82,7 +83,7 @@ const getPersonDynamoDb = async ({
     KeyConditionExpression: "pk = :pk",
     FilterExpression: "person.id = :personId",
     ExpressionAttributeValues: {
-      ":pk": { S: `${username}#people` },
+      ":pk": { S: `${username}#${EnumDynamoPk.people}` },
       ":personId": { N: `${personId}` },
     },
   });
@@ -115,7 +116,7 @@ export const postPersonDb = async ({
   };
 
   const personDDB: IPersonDDB = {
-    pk: `${username}#people`,
+    pk: `${username}#${EnumDynamoPk.people}`,
     sk: lastId + 1,
     person: person,
   };
@@ -151,7 +152,7 @@ export const putPersonDb = async ({
   personId,
 }: IReqPutPerson): Promise<number | null> => {
   const personDDB: IPersonDDB = {
-    pk: `${username}#people`,
+    pk: `${username}#${EnumDynamoPk.people}`,
     sk: personId,
     person: person,
   };
@@ -195,7 +196,7 @@ export const deletePersonDb = async ({
   personId,
 }: IReqDeletePerson): Promise<number | null> => {
   const itemDDB: IDynamoDbItem = {
-    pk: `${username}#people`,
+    pk: `${username}#${EnumDynamoPk.people}`,
     sk: personId,
   };
 

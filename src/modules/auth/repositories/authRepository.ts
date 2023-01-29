@@ -5,6 +5,7 @@ import { IUserDDB } from "../../../models/dynamoDbModels/IUserDDB";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqLogin } from "../models/IReqLogin";
 import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dynamoDbTableName";
+import { EnumDynamoPk } from "../../../shared/enums/EnumDynamoPk";
 
 const findUserDb = async ({
   username,
@@ -31,7 +32,7 @@ const getUsersDynamoDb = async ({
       "#u": "user",
     },
     ExpressionAttributeValues: {
-      ":pk": { S: `${username}#user` },
+      ":pk": { S: `${username}#${EnumDynamoPk.users}` },
       ":password": { S: password },
     },
   });

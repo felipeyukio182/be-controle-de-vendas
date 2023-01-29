@@ -9,6 +9,7 @@ import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { IDynamoDbItem } from "../../../models/dynamoDbModels/IDynamoDbItem";
 import { IProductDDB } from "../../../models/dynamoDbModels/IProductDDB";
 import { IProduct } from "../../../models/IProduct";
+import { EnumDynamoPk } from "../../../shared/enums/EnumDynamoPk";
 import { dynamoDbTableName } from "../../../shared/services/dynamoDb/config/dynamoDbTableName";
 import createDynamoDbClient from "../../../shared/services/dynamoDb/createDynamoDbClient";
 import { IReqDeleteProduct } from "../models/IReqDeleteProduct";
@@ -34,7 +35,7 @@ const getProductsDynamoDb = async (
     TableName: dynamoDbTableName,
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: `${username}#products` },
+      ":pk": { S: `${username}#${EnumDynamoPk.products}` },
     },
     ExclusiveStartKey: lastEvaluatedKey,
     ScanIndexForward: true,
@@ -84,7 +85,7 @@ const getProductDynamoDb = async ({
     KeyConditionExpression: "pk = :pk",
     FilterExpression: "product.id = :productId",
     ExpressionAttributeValues: {
-      ":pk": { S: `${username}#products` },
+      ":pk": { S: `${username}#${EnumDynamoPk.products}` },
       ":productId": { N: `${productId}` },
     },
   });
@@ -117,7 +118,7 @@ export const postProductDb = async ({
   };
 
   const personDDB: IProductDDB = {
-    pk: `${username}#products`,
+    pk: `${username}#${EnumDynamoPk.products}`,
     sk: lastId + 1,
     product: product,
   };
@@ -153,7 +154,7 @@ export const putProductDb = async ({
   productId,
 }: IReqPutProduct): Promise<number | null> => {
   const productDDB: IProductDDB = {
-    pk: `${username}#products`,
+    pk: `${username}#${EnumDynamoPk.products}`,
     sk: productId,
     product: product,
   };
@@ -197,7 +198,7 @@ export const deleteProductDb = async ({
   productId,
 }: IReqDeleteProduct): Promise<number | null> => {
   const itemDDB: IDynamoDbItem = {
-    pk: `${username}#products`,
+    pk: `${username}#${EnumDynamoPk.products}`,
     sk: productId,
   };
 
