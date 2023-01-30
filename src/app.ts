@@ -14,6 +14,8 @@ const httpLogger = pino();
 app.use(bodyParser.json());
 app.use(httpLogger);
 
+app.use("/docs", express.static(__dirname + "/docs"));
+
 createRoutes(app);
 
 app.listen(port, () => {

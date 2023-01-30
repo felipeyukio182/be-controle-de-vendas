@@ -7,7 +7,9 @@
     "start": "node dist/app.js",
     "dev": "nodemon",
     "build": "rm -rf ./dist && npx tsc",
-    "compile": "npm run build && npm start",
+    "compile": "npm run build && npm run createDir && npm run copyDir && npm start",
+    "createDir": "mkdir ./dist/docs",
+    "copyDir": "cp -r src/docs/* dist/docs/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"
   },
