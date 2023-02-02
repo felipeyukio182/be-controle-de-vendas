@@ -153,9 +153,10 @@ paths:
       responses:
         '200':
           description: "Operação realizada com sucesso."
+          schema:
+            $ref: "#/definitions/HttpStatus"
       security:
         - authorization: []
-
   /people/{personId}:
     get:
       tags:
@@ -176,7 +177,10 @@ paths:
         '200':
           description: "Operação realizada com sucesso."
           schema:
-            $ref: '#/definitions/Person'
+            type: object
+            properties:
+              person:
+                $ref: '#/definitions/Person'
       security:
         - authorization: []
     put:
@@ -203,6 +207,8 @@ paths:
       responses:
         '200':
           description: "Operação realizada com sucesso."
+          schema:
+            $ref: "#/definitions/HttpStatus"
       security:
         - authorization: []
     delete:
@@ -223,6 +229,131 @@ paths:
       responses:
         '200':
           description: "Operação realizada com sucesso."
+          schema:
+            $ref: "#/definitions/HttpStatus"
+      security:
+        - authorization: []
+                
+  /products:
+    get:
+      tags:
+        - Products
+      summary: "Busca todos os produtos cadastradas no sistema."
+      description: "Busca todos os registros de produtos cadastrados no sistema."
+      operationId: getProductsController
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: "Operação realizada com sucesso."
+          schema:
+            type: object
+            properties:
+              products:
+                type: array
+                items:
+                  $ref: '#/definitions/Product'
+      security:
+        - authorization: []
+    post:
+      tags:
+        - Products
+      summary: "Cadastra uma novo produto."
+      description: "Cadastra um novo registro de produto no sistema."
+      operationId: postProductController
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: product
+          in: body
+          description: "Dados do novo produto a ser cadastrado."
+          required: true
+          schema:
+            $ref: "#/definitions/ProductWithoutId"
+              
+      responses:
+        '200':
+          description: "Operação realizada com sucesso."
+          schema:
+            $ref: "#/definitions/HttpStatus"
+      security:
+        - authorization: []
+  /products/{productId}:
+    get:
+      tags:
+        - Products
+      summary: "Buscar produto por ID."
+      description: "Busca o registro do produto pelo ID."
+      operationId: getProductController
+      produces:
+        - application/json
+      parameters:
+        - name: productId
+          in: path
+          description: "ID do produto."
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: "Operação realizada com sucesso."
+          schema:
+            type: object
+            properties:
+              product:
+                $ref: '#/definitions/Product'
+      security:
+        - authorization: []
+    put:
+      tags:
+        - Products
+      summary: "Atualiza um produto do sistema."
+      description: 'Atualiza o registro de um produto no sistema.'
+      operationId: putProductController
+      produces:
+        - application/json
+      parameters:
+        - name: productId
+          in: path
+          description: "ID do produto a ser atualizado."
+          required: true
+          type: integer
+          format: int64
+        - name: product
+          in: body
+          description: "Dados do produto a ser atualizado."
+          required: true
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        '200':
+          description: "Operação realizada com sucesso."
+          schema:
+            $ref: "#/definitions/HttpStatus"
+      security:
+        - authorization: []
+    delete:
+      tags:
+        - Products
+      summary: "Remove um produto do sistema."
+      description: 'Remove o registro de um produto no sistema.'
+      operationId: deleteProductController
+      produces:
+        - application/json
+      parameters:
+        - name: productId
+          in: path
+          description: "ID do produto a ser removido."
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: "Operação realizada com sucesso."
+          schema:
+            $ref: "#/definitions/HttpStatus"
       security:
         - authorization: []
 
@@ -286,7 +417,36 @@ definitions:
         type: string
       number:
         type: string
-        
+  
+  Product:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      price:
+        type: number
+        format: float
+  
+  ProductWithoutId:
+    type: object
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+        format: float
+  
+  HttpStatus:
+    type: object
+    properties:
+      httpStatus:
+        type: integer
+        format: int32
+      msg:
+        type: string
 
 externalDocs:
   description: Find out more about Swagger
